@@ -23,7 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)startScan;
 - (uint8_t)findPrinter: (const char *) name;
 - (void)writeData: (uint8_t *)pData withLength:(int)len withResponse:(bool)response;
-
+- (void)preGraphics: (int)height;
+- (void) postGraphics;
+- (int)getWidth;
+- (void) scanLine: (uint8_t *)pData withLength:(int)len;
+- (uint8_t) CheckSum:(uint8_t *)pData withLength: (int) iLen;
 @property (retain) NSMutableArray *discoveredPeripherals;
 @property (strong, nonatomic) CBCentralManager * manager;
 @property (atomic) int count;
