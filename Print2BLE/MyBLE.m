@@ -2,7 +2,8 @@
 //  MyBLE.m
 //  Print2BLE
 //
-//  Created by Laurence Bank on 9/1/21.
+//  Created by Larry Bank
+//  Copyright (c) 2021 BitBank Software Inc. All rights reserved.
 //
 
 #import "MyBLE.h"
@@ -42,43 +43,11 @@ const unsigned char ucMirror[256]=
     return self;
 }
 
-//- (instancetype)initWithQueue: (dispatch_queue_t) centralDelegateQueue
-//{
-//    return [self initWithQueue: centralDelegateQueue
-//                 serviceToScan: nil
-//          characteristicToRead: nil];
-//                 serviceToScan: [CBUUID UUIDWithString: @"29D7544B-6870-45A4-BB7E-D981535F4525"]
-//          characteristicToRead: [CBUUID UUIDWithString: @"B81672D5-396B-4803-82C2-029D34319015"]];
-//}
-
-//- (instancetype)initWithQueue: (dispatch_queue_t) centralDelegateQueue
-//                serviceToScan: (CBUUID *) scanServiceId
-//         characteristicToRead: (CBUUID *) characteristicId
-//{
-//    self = [super init];
-//    if (self)
-//    {
-//        self.discoveredPeripherals = [NSMutableArray array];
-//        _count=0;
-//        self.shouldScan = true;
-//        _bleQueue = centralDelegateQueue;
-//        self.serviceUuid = scanServiceId;
-//        self.characteristicUuid = characteristicId;
-//        _manager = [[CBCentralManager alloc] initWithDelegate: self
-//                                                        queue: _bleQueue];
-//    }
-//    return self;
-//}
-
-//------------------------------------------------------------------------------
 - (void)dealloc
 {
     [self.centralManager stopScan];
     //    [_manager dealloc]
 }
-
-//------------------------------------------------------------------------------
-#pragma mark Manager Methods
 
 - (uint8_t)findPrinter: (const char *) name
 {
@@ -163,10 +132,6 @@ const unsigned char ucMirror[256]=
 //------------------------------------------------------------------------------
 - (void)centralManagerDidUpdateState:(CBCentralManager *)manager
 {
-    if ([self.centralManager state] == CBManagerStatePoweredOn && _shouldScan)
-    {
-        [self startScan];
-    }
 }
 //------------------------------------------------------------------------------
 // Invoked whenever an existing connection with the peripheral is torn down.
@@ -190,19 +155,10 @@ didDisconnectPeripheral: (CBPeripheral *)aPeripheral
 //------------------------------------------------------------------------------
 - (void) startScan
 {
-    printf("Start scanning\n");
+    NSLog(@"Start scanning");
     
-//    if (!serviceUuid)
-    {
-        [self.centralManager scanForPeripheralsWithServices: nil
-                                         options: nil];
-    }
-//    else
-//    {
-//        [_manager scanForPeripheralsWithServices: [NSArray arrayWithObject: serviceUuid]
-//                                         options: nil];
-//    }
-}
+    [self.centralManager scanForPeripheralsWithServices: nil options: nil];
+} /* startScan */
 
 - (void) connectToPeripheral: (CBPeripheral *)aPeripheral
 {
@@ -218,8 +174,6 @@ didDisconnectPeripheral: (CBPeripheral *)aPeripheral
     };
     [self.centralManager connectPeripheral:_myPeripheral options:connectOptions];
 }
-//------------------------------------------------------------------------------
-#pragma mark Peripheral Methods
 
 // Invoked upon completion of a -[discoverServices:] request.
 // Discover available characteristics on interested services
@@ -228,11 +182,8 @@ didDiscoverServices:(NSError *)error
 {
     for (CBService *aService in aPeripheral.services)
     {
-//#if DEBUG_MODE
         NSLog(@"Service found with UUID: %@", aService.UUID);
-//#endif
-//        [aPeripheral discoverCharacteristics:@[characteristicUuid] forService:aService];
-        [aPeripheral discoverCharacteristics:nil /*@[[CBUUID UUIDWithString:@"2AF1"]]*/ forService:aService];
+        [aPeripheral discoverCharacteristics:nil forService:aService];
     }
 }
 //------------------------------------------------------------------------------
@@ -243,9 +194,7 @@ didDiscoverServices:(NSError *)error
 {
     for (CBCharacteristic *aChar in service.characteristics)
     {
-//#if DEBUG_MODE
         NSLog(@"Service: %@ with Char: %@", [aChar service].UUID, aChar.UUID);
-//#endif
         CBUUID *theSvc = [CBUUID UUIDWithString:validServices[_ucPrinterType]];
         CBUUID *theChr = [CBUUID UUIDWithString:validChars[_ucPrinterType]];
         if ([[aChar service].UUID isEqual:theSvc] && [aChar.UUID isEqual:theChr]) {
@@ -254,25 +203,9 @@ didDiscoverServices:(NSError *)error
         _bConnected = YES; // indicates that we're ready to send data
             [[NSNotificationCenter defaultCenter] postNotificationName:@"StatusChangedNotification"
                                                                 object:self userInfo:nil];
-
-//        if (aChar.properties & CBCharacteristicPropertyRead)
-//        {
-//            static char *szMsg = "Hello from MacOS!\n";
-//            static unsigned char ucInit[] = {0x10, 0xff, 0xfe, 0x01};
-//            NSData *myInit = [NSData dataWithBytes:ucInit length:4];
-//            NSData *myData = [NSData dataWithBytes:szMsg length:strlen(szMsg)];
-            
-//            if (_ucPrinterType == PRINTER_PERIPAGE || _ucPrinterType == PRINTER_PERIPAGEPLUS)
-//                [aPeripheral writeValue:myInit forCharacteristic:aChar type:CBCharacteristicWriteWithoutResponse];
-//            [aPeripheral setNotifyValue:YES forCharacteristic:aChar];
-//            [aPeripheral writeValue:myData forCharacteristic:aChar type:CBCharacteristicWriteWithoutResponse];
-            //                [aPeripheral readValueForCharacteristic:aChar];
-            //                [aPeripheral readValueForDescriptor:nil]
-//        }
         }
     }
 }
-//------------------------------------------------------------------------------
 
 // Invoked upon completion of a -[readValueForCharacteristic:] request or on the reception of a notification/indication.
 - (void) peripheral: (CBPeripheral *)aPeripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error

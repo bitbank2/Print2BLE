@@ -1,9 +1,9 @@
 //
 //  DragDropView.m
-//  TIFFTool
+//  Print2BLE
 //
-//  Created by Laurence Bank on 12/12/14.
-//  Copyright (c) 2014 TDF Software. All rights reserved.
+//  Created by Larry Bank
+//  Copyright (c) 2021 BitBank Software Inc. All rights reserved.
 //
 
 #import "DragDropView.h"
@@ -15,7 +15,7 @@
 - (id)initWithFrame:(NSRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
-        [self registerForDraggedTypes:[NSArray arrayWithObject:NSFilenamesPboardType]];
+        [self registerForDraggedTypes:[NSArray arrayWithObject:NSPasteboardTypeFileURL]];
     }
     return self;
 }
@@ -52,13 +52,8 @@
 }
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender{
-//    NSArray *draggedFilenames = [[sender draggingPasteboard] propertyListForType:NSPasteboardTypeFileURL];
-//    NSString *textDataFile = [NSString stringWithContentsOfFile:[draggedFilenames objectAtIndex:0] encoding:NSUTF8StringEncoding error:nil];
-    
-//    NSLog(@"%@", textDataFile);
     [[NSNotificationCenter defaultCenter] postNotificationName:@"PrintFileNotification"
                                                         object:self userInfo:nil];
-
 }
 
 @end

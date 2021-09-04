@@ -2,7 +2,8 @@
 //  ViewController.m
 //  Print2BLE
 //
-//  Created by Laurence Bank on 8/31/21.
+//  Created by Larry Bank
+//  Copyright (c) 2021 BitBank Software Inc. All rights reserved.
 //
 
 #import "ViewController.h"
@@ -164,8 +165,6 @@ static int iWidth, iHeight; // size of the image that's ready to print
             NSColorSpace *targetColorSpace = [NSColorSpace genericGrayColorSpace];
             NSBitmapImageRep *grayBitmap = [bitmap bitmapImageRepByConvertingToColorSpace: targetColorSpace renderingIntent: NSColorRenderingIntentDefault];
                                            
-                                           //bitmapImageRepByConvertingToColorSpace(NSColorSpace.genericGrayColorSpace(), renderingIntent: NSColorRenderingIntent.Default)];
-
             int iOriginalWidth, iOriginalHeight;
             // scale to correct size (576 or 384 pixels wide)
             float ratio;

@@ -2,7 +2,8 @@
 //  ViewController.h
 //  Print2BLE
 //
-//  Created by Laurence Bank on 8/31/21.
+//  Created by Larry Bank
+//  Copyright (c) 2021 BitBank Software Inc. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>

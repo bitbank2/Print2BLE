@@ -1,9 +1,9 @@
 //
 //  DragDropView.h
-//  TIFFTool
+//  Print2BLE
 //
-//  Created by Laurence Bank on 12/12/14.
-//  Copyright (c) 2014 TDF Software. All rights reserved.
+//  Created by Larry Bank
+//  Copyright (c) 2021 BitBank Software Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
