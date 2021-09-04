@@ -19,6 +19,10 @@ How to use it?
 --------------
 Upon running the app, you will be presented with a window containing 2 push buttons. The <b>connect</b> button will scan for supported printers and connect to the first one it finds. The status text will update to show that it connected to the named device. Next, drag an image onto the window from the Finder. A preview will display how it will look on paper. If you're satisfied with the results, press the <b>print</b> button.<br>
 
+What printers does it support?
+-----------------------------
+It currently supports the GOOJPRT PT210/MTP-2, MTP-3, 'cat/pig/panda' and PeriPage 304pi A6. As I get info for other printers, I'll add support for them too.<br>
+
 If you find this code useful, please consider becoming a sponsor or sending a donation.
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SR4F44J2UR8S4)
