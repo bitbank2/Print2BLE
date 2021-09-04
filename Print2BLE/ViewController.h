@@ -14,11 +14,12 @@
 @property (nonatomic, retain) DragDropView *myview;
 @property (nonatomic) NSString *filename;
 @property (weak) IBOutlet NSImageView *myImage;
+@property (weak) IBOutlet NSTextField *StatusLabel;
 
 // Process a new file
 - (void)processFile:(NSString *)path;
-- (void)printFile:(NSNotification *) notification;
+- (void)ditherFile:(NSNotification *) notification;
 - (uint8_t *)DitherImage:(uint8_t*)pPixels width:(int)iWidth height:(int)iHeight;
-- (void) initContrast;
+- (void) printImage;
 @end
 

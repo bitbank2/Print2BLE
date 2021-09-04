@@ -723,7 +723,7 @@
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jeq-af-i1g">
                                 <rect key="frame" x="520" y="433" width="85" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="Transmit" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zur-6x-z3a">
+                                <buttonCell key="cell" type="push" title="Print" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zur-6x-z3a">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -738,13 +738,23 @@
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cg3-ap-Mtc">
                                         <rect key="frame" x="32" y="26" width="576" height="400"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="0sY-8m-yCI"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" id="0sY-8m-yCI"/>
                                     </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zys-OO-ldj">
+                                        <rect key="frame" x="117" y="444" width="407" height="16"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Connect, then drop an image here" id="YJt-pB-cZE">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                 </subviews>
                             </customView>
                         </subviews>
                     </view>
                     <connections>
+                        <outlet property="StatusLabel" destination="Zys-OO-ldj" id="UMQ-Cb-uEF"/>
                         <outlet property="myImage" destination="Cg3-ap-Mtc" id="emA-AS-2a8"/>
                     </connections>
                 </viewController>

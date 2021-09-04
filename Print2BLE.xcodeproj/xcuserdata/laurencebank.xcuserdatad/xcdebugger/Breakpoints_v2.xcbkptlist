@@ -30,8 +30,8 @@
             filePath = "Print2BLE/MyBLE.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "158"
-            endingLineNumber = "158"
+            startingLineNumber = "168"
+            endingLineNumber = "168"
             landmarkName = "-centralManagerDidUpdateState:"
             landmarkType = "7">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "Print2BLE/MyBLE.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "215"
-            endingLineNumber = "215"
+            startingLineNumber = "229"
+            endingLineNumber = "229"
             landmarkName = "-peripheral:didDiscoverServices:"
             landmarkType = "7">
             <Locations>
@@ -94,8 +94,8 @@
             filePath = "Print2BLE/MyBLE.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "237"
-            endingLineNumber = "237"
+            startingLineNumber = "251"
+            endingLineNumber = "251"
             landmarkName = "-peripheral:didDiscoverCharacteristicsForService:error:"
             landmarkType = "7">
          </BreakpointContent>
@@ -126,8 +126,8 @@
             filePath = "Print2BLE/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "64"
-            endingLineNumber = "64"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
             landmarkName = "-viewDidLayout"
             landmarkType = "7">
          </BreakpointContent>
@@ -158,9 +158,9 @@
             filePath = "Print2BLE/ViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
-            landmarkName = "-printFile:"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
+            landmarkName = "-ditherFile:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

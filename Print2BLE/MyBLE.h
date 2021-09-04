@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)preGraphics: (int)height;
 - (void) postGraphics;
 - (int)getWidth;
+- (NSString *)getName;
+- (bool)isConnected;
 - (void) scanLine: (uint8_t *)pData withLength:(int)len;
 - (uint8_t) CheckSum:(uint8_t *)pData withLength: (int) iLen;
 @property (retain) NSMutableArray *discoveredPeripherals;

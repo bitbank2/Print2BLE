@@ -10,33 +10,10 @@
 
 MyBLE *BLEClass;
 uint8_t contrast_lookup[256];
+static uint8_t *pDithered = NULL; // Dithered image data ready to print
+static int iWidth, iHeight; // size of the image that's ready to print
 
 @implementation ViewController
-
-- (void) initContrast
-{
-double contrast = -30;
-double newValue = 0;
-double c = (100.0 + contrast) / 100.0;
-
-c *= c;
-
-    for (int i = 0; i < 256; i++)
-    {
-        newValue = (double)i;
-        newValue /= 255.0;
-        newValue -= 0.5;
-        newValue *= c;
-        newValue += 0.5;
-        newValue *= 255;
-
-        if (newValue < 0)
-            newValue = 0;
-        if (newValue > 255)
-            newValue = 255;
-        contrast_lookup[i] = (uint8_t)newValue;
-    } // for i
-} /* initContrast */
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -49,11 +26,15 @@ c *= c;
     [[self view] addSubview:_myview];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(printFile:)
+                                             selector:@selector(ditherFile:)
                                                  name:@"PrintFileNotification"
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(statusChanged:)
+                                                 name:@"StatusChangedNotification"
+                                               object:nil];
+
 //    [BLEClass startScan]; // scan and connect to any printers in the area
-    [self initContrast];
 }
 
 - (void)viewDidLayout {
@@ -74,8 +55,10 @@ c *= c;
 }
 
 - (IBAction)TransmitPushed:(NSButton *)sender {
-    NSLog(@"Transmit!");
+    NSLog(@"Print!");
+    [self printImage];
 }
+
 // Process a new file
 - (void)processFile:(NSString *)path
 {
@@ -141,7 +124,35 @@ c *= c;
     return pDest;
 } /* DitherImage */
 
-- (void)printFile:(NSNotification *) notification
+//
+// Send the image that was previously dithered
+// to the connected printer
+//
+- (void)printImage
+{
+    if (pDithered == NULL) return; // no image to print
+    // Now send it to the printer
+    [BLEClass preGraphics:iHeight];
+    int iPitch = iWidth/8;
+    uint8_t *pSrc = pDithered;
+    for (int y=0; y<iHeight; y++) {
+        [BLEClass scanLine:pSrc withLength:iPitch];
+        pSrc += iPitch;
+    }
+    [BLEClass postGraphics];
+
+} /* printImage */
+
+- (void)statusChanged:(NSNotification *) notification
+{
+    if ([BLEClass isConnected]) {
+        _StatusLabel.stringValue = [NSString stringWithFormat:@"Connected to: %@", [BLEClass getName]];
+    } else {
+        _StatusLabel.stringValue = @"Disconnected";
+    }
+} /* statusChanged */
+
+- (void)ditherFile:(NSNotification *) notification
 {
     // load the file into an image object
     NSData *theFileData = [[NSData alloc] initWithContentsOfFile:_filename options: NSDataReadingMappedAlways error: nil]; // read file into memory
@@ -155,18 +166,17 @@ c *= c;
                                            
                                            //bitmapImageRepByConvertingToColorSpace(NSColorSpace.genericGrayColorSpace(), renderingIntent: NSColorRenderingIntent.Default)];
 
-            int iWidth, iHeight;
+            int iOriginalWidth, iOriginalHeight;
             // scale to correct size (576 or 384 pixels wide)
-            int iNewWidth, iNewHeight;
             float ratio;
-            iWidth = bitmap.size.width;
-            iHeight = bitmap.size.height;
-            iNewWidth = [BLEClass getWidth]; // get printer width in pixels
-            ratio = (float)iWidth / (float)iNewWidth;
-            iNewHeight = (int)((float)iHeight / ratio);
+            iOriginalWidth = bitmap.size.width;
+            iOriginalHeight = bitmap.size.height;
+            iWidth = [BLEClass getWidth]; // get printer width in pixels
+            ratio = (float)iOriginalWidth / (float)iWidth;
+            iHeight = (int)((float)iOriginalHeight / ratio);
             NSSize newSize;
-            newSize.width = iNewWidth;
-            newSize.height = iNewHeight;
+            newSize.width = iWidth;
+            newSize.height = iHeight;
             // now resize it
             NSBitmapImageRep *rep = [[NSBitmapImageRep alloc]
                       initWithBitmapDataPlanes:NULL
@@ -185,15 +195,16 @@ c *= c;
             [grayBitmap drawInRect:NSMakeRect(0, 0, newSize.width, newSize.height)];
             [NSGraphicsContext restoreGraphicsState];
             uint8_t *pPixels = [rep bitmapData];
-            uint8_t *pOut = [self DitherImage:pPixels width:iNewWidth height:iNewHeight];
+            if (pDithered) free(pDithered);
+            pDithered = [self DitherImage:pPixels width:iWidth height:iHeight];
             // Create a preview image
             // convert the 1-bpp image to 8-bit grayscale so that we can show it in the preview window
-            uint8_t *pGray = (uint8_t *)malloc(iNewWidth * iNewHeight);
+            uint8_t *pGray = (uint8_t *)malloc(iWidth * iHeight);
             int i, j, iCount;
             uint8_t c, ucMask, *s, *d;
-            iCount = (iNewWidth/8) * iNewHeight;
+            iCount = (iWidth/8) * iHeight;
             d = pGray;
-            s = pOut;
+            s = pDithered;
             for (i=0; i<iCount; i++) {
                 ucMask = 0x80;
                 c = *s++;
@@ -210,9 +221,9 @@ c *= c;
             CGColorSpaceRef colorSpace;
             CGContextRef gtx;
             NSUInteger bitsPerComponent = 8;
-            NSUInteger bytesPerRow = iNewWidth;
+            NSUInteger bytesPerRow = iWidth;
             colorSpace = CGColorSpaceCreateDeviceGray();
-            gtx = CGBitmapContextCreate(pGray, iNewWidth, iNewHeight, bitsPerComponent, bytesPerRow, colorSpace, kCGBitmapByteOrderDefault | kCGImageAlphaNone);
+            gtx = CGBitmapContextCreate(pGray, iWidth, iHeight, bitsPerComponent, bytesPerRow, colorSpace, kCGBitmapByteOrderDefault | kCGImageAlphaNone);
             CGImageRef myimage = CGBitmapContextCreateImage(gtx);
             CGContextSetInterpolationQuality(gtx, kCGInterpolationNone);
             NSImage *image = [[NSImage alloc]initWithCGImage:myimage size:NSZeroSize];
@@ -222,16 +233,7 @@ c *= c;
             CGContextRelease(gtx);
             CGImageRelease(myimage);
             free(pGray);
-            // Now send it to the printer
-            [BLEClass preGraphics:iNewHeight];
-            int iPitch = iNewWidth/8;
-            uint8_t *pSrc = pOut;
-            for (int y=0; y<iNewHeight; y++) {
-                [BLEClass scanLine:pSrc withLength:iPitch];
-                pSrc += iPitch;
-            }
-            [BLEClass postGraphics];
         }
     }
-} /* printFile*/
+} /* ditherFile*/
 @end

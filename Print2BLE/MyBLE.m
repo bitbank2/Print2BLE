@@ -100,6 +100,16 @@ const unsigned char ucMirror[256]=
     return ucType;
 } /* findPrinter */
 
+- (bool)isConnected
+{
+    return _bConnected;
+} /* isConnected */
+
+- (NSString *)getName
+{
+    return [_myPeripheral name];
+} /* getName */
+
 - (void)centralManager:(CBCentralManager *)central
  didDiscoverPeripheral:(CBPeripheral *)aPeripheral
      advertisementData:(NSDictionary *)advertisementData
@@ -165,6 +175,10 @@ didDisconnectPeripheral: (CBPeripheral *)aPeripheral
                   error: (NSError *)error
 {
     printf("didDisconnectPeripheral\n");
+    _bConnected = NO;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"StatusChangedNotification"
+                                                        object:self userInfo:nil];
+
 }
 //------------------------------------------------------------------------------
 /// Invoked whenever the central manager fails to create a connection with the peripheral.
@@ -237,8 +251,10 @@ didDiscoverServices:(NSError *)error
         if ([[aChar service].UUID isEqual:theSvc] && [aChar.UUID isEqual:theChr]) {
             printf("Found the service+char we're looking for!\n");
         _myChar = aChar; // keep these since we will need them for communicating
-        _bConnected = 1; // indicates that we're ready to send data
-        
+        _bConnected = YES; // indicates that we're ready to send data
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"StatusChangedNotification"
+                                                                object:self userInfo:nil];
+
 //        if (aChar.properties & CBCharacteristicPropertyRead)
 //        {
 //            static char *szMsg = "Hello from MacOS!\n";
