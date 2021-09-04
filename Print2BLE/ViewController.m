@@ -9,8 +9,34 @@
 #import "MyBLE.h"
 
 MyBLE *BLEClass;
+uint8_t contrast_lookup[256];
 
 @implementation ViewController
+
+- (void) initContrast
+{
+double contrast = -30;
+double newValue = 0;
+double c = (100.0 + contrast) / 100.0;
+
+c *= c;
+
+    for (int i = 0; i < 256; i++)
+    {
+        newValue = (double)i;
+        newValue /= 255.0;
+        newValue -= 0.5;
+        newValue *= c;
+        newValue += 0.5;
+        newValue *= 255;
+
+        if (newValue < 0)
+            newValue = 0;
+        if (newValue > 255)
+            newValue = 255;
+        contrast_lookup[i] = (uint8_t)newValue;
+    } // for i
+} /* initContrast */
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -26,8 +52,8 @@ MyBLE *BLEClass;
                                              selector:@selector(printFile:)
                                                  name:@"PrintFileNotification"
                                                object:nil];
-    [BLEClass startScan]; // scan and connect to any printers in the area
-
+//    [BLEClass startScan]; // scan and connect to any printers in the area
+    [self initContrast];
 }
 
 - (void)viewDidLayout {
@@ -69,7 +95,7 @@ MyBLE *BLEClass;
     uint8_t ucTemp[640];
     
         errors = ucTemp; // plenty of space here for the bitmaps we'll generate
-        errors[0] = errors[1] = errors[2] = 0;
+        memset(ucTemp, 0, sizeof(ucTemp));
         pSrc = pPixels; // write the new pixels over the original
         iDestPitch = (iWidth+7)/8;
         pDest = (uint8_t *)malloc(iDestPitch * iHeight);
@@ -86,6 +112,7 @@ MyBLE *BLEClass;
             for (x=0; x<iWidth; x++)
             {
                 cNew = *s++; // get grayscale uint8_t pixel
+                cNew = (cNew * 2)/3; // make white end of spectrum less "blown out"
                 // add forward error
                 cNew += lFErr;
                 if (cNew > 255) cNew = 255;     // clip to uint8_t
@@ -159,13 +186,49 @@ MyBLE *BLEClass;
             [NSGraphicsContext restoreGraphicsState];
             uint8_t *pPixels = [rep bitmapData];
             uint8_t *pOut = [self DitherImage:pPixels width:iNewWidth height:iNewHeight];
+            // Create a preview image
+            // convert the 1-bpp image to 8-bit grayscale so that we can show it in the preview window
+            uint8_t *pGray = (uint8_t *)malloc(iNewWidth * iNewHeight);
+            int i, j, iCount;
+            uint8_t c, ucMask, *s, *d;
+            iCount = (iNewWidth/8) * iNewHeight;
+            d = pGray;
+            s = pOut;
+            for (i=0; i<iCount; i++) {
+                ucMask = 0x80;
+                c = *s++;
+                for (j=0; j<8; j++) {
+                    if (c & ucMask)
+                        *d = 0;
+                    else
+                        *d = 0xff;
+                    ucMask >>= 1;
+                    d++;
+                }
+            }
+            // make an NSImage out of the grayscale bitmap
+            CGColorSpaceRef colorSpace;
+            CGContextRef gtx;
+            NSUInteger bitsPerComponent = 8;
+            NSUInteger bytesPerRow = iNewWidth;
+            colorSpace = CGColorSpaceCreateDeviceGray();
+            gtx = CGBitmapContextCreate(pGray, iNewWidth, iNewHeight, bitsPerComponent, bytesPerRow, colorSpace, kCGBitmapByteOrderDefault | kCGImageAlphaNone);
+            CGImageRef myimage = CGBitmapContextCreateImage(gtx);
+            CGContextSetInterpolationQuality(gtx, kCGInterpolationNone);
+            NSImage *image = [[NSImage alloc]initWithCGImage:myimage size:NSZeroSize];
+            _myImage.image = image; // set it into the image view
+            // Free temp objects
+            CGColorSpaceRelease(colorSpace);
+            CGContextRelease(gtx);
+            CGImageRelease(myimage);
+            free(pGray);
             // Now send it to the printer
             [BLEClass preGraphics:iNewHeight];
             int iPitch = iNewWidth/8;
-            uint8_t *s = pOut;
+            uint8_t *pSrc = pOut;
             for (int y=0; y<iNewHeight; y++) {
-                [BLEClass scanLine:s withLength:iPitch];
-                s += iPitch;
+                [BLEClass scanLine:pSrc withLength:iPitch];
+                pSrc += iPitch;
             }
             [BLEClass postGraphics];
         }
