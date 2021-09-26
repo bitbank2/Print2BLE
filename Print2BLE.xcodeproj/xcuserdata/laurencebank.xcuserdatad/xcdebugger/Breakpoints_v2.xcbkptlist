@@ -32,7 +32,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "183"
             endingLineNumber = "183"
-            landmarkName = "-peripheral:didDiscoverServices:"
+            landmarkName = "-findPrinter:"
             landmarkType = "7">
             <Locations>
                <Location
@@ -80,7 +80,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "200"
             endingLineNumber = "200"
-            landmarkName = "-peripheral:didDiscoverCharacteristicsForService:error:"
+            landmarkName = "-findPrinter:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
