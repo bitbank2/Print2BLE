@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)writeData: (uint8_t *)pData withLength:(int)len withResponse:(bool)response;
 - (void)preGraphics: (int)height;
 - (void)postGraphics;
+- (void)feedPaper;
 - (int)getWidth;
 - (NSString *)getName;
 - (bool)isConnected;
@@ -44,6 +45,7 @@ enum {
   PRINTER_CAT,
   PRINTER_PERIPAGEPLUS,
   PRINTER_PERIPAGE,
+  PRINTER_PANDA,
   PRINTER_COUNT
 };
 

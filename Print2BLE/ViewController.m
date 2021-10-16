@@ -50,6 +50,10 @@ static int iWidth, iHeight; // size of the image that's ready to print
 
     // Update the view, if already loaded.
 }
+- (IBAction)FeedPushed:(NSButton *)sender {
+    NSLog(@"Feed!");
+    [BLEClass feedPaper];
+}
 - (IBAction)ConnectPushed:(NSButton *)sender {
     NSLog(@"Connect!");
     [BLEClass startScan];
@@ -224,7 +228,7 @@ static int iWidth, iHeight; // size of the image that's ready to print
             colorSpace = CGColorSpaceCreateDeviceGray();
             gtx = CGBitmapContextCreate(pGray, iWidth, iHeight, bitsPerComponent, bytesPerRow, colorSpace, kCGBitmapByteOrderDefault | kCGImageAlphaNone);
             CGImageRef myimage = CGBitmapContextCreateImage(gtx);
-            CGContextSetInterpolationQuality(gtx, kCGInterpolationNone);
+//            CGContextSetInterpolationQuality(gtx, kCGInterpolationNone);
             NSImage *image = [[NSImage alloc]initWithCGImage:myimage size:NSZeroSize];
             _myImage.image = image; // set it into the image view
             // Free temp objects
