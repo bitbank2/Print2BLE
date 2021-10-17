@@ -256,12 +256,12 @@ didDiscoverServices:(NSError *)error
     if (_bConnected) {
         if (_ucPrinterType == PRINTER_CAT) {
             // needs special byte sequence
-            int iLines = 3; // number of 1/6" lines
+            int iLines = 1; // number of 1/6" lines
             memcpy(ucTemp, paperFeed, sizeof(paperFeed));
             ucTemp[6] = (uint8_t)(iLines >> 8);
             ucTemp[7] = (uint8_t)iLines;
             ucTemp[8] = [self CheckSum:&ucTemp[6] withLength: 2];
-            iLen = 9;
+            iLen = sizeof(paperFeed);
         } else {
             iLen = 2;
             ucTemp[0] = 0xd;
