@@ -296,6 +296,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				PRODUCT_BUNDLE_IDENTIFIER = tdfsoftware.Print2BLE;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -316,6 +317,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				PRODUCT_BUNDLE_IDENTIFIER = tdfsoftware.Print2BLE;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

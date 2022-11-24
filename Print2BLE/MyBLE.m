@@ -51,20 +51,23 @@ const unsigned char ucMirror[256]=
 
 - (uint8_t)findPrinter: (const char *) name
 {
-    const char *szTypes[] = {"MTP-II", "MTP-2", "MTP-3", "MTP-3F", "PeriPage+", "PeriPage_", "GT01", "GT02", "GB01", "GB02", "GB03", "YHK-54A8", NULL};
-    const uint8_t ucTypes[] = {PRINTER_MTP2, PRINTER_MTP2, PRINTER_MTP3, PRINTER_MTP3, PRINTER_PERIPAGEPLUS, PRINTER_PERIPAGE, PRINTER_CAT, PRINTER_CAT, PRINTER_CAT, PRINTER_CAT, PRINTER_CAT, PRINTER_PANDA};
+    const char *szTypes[] = {"MTP-II", "MTP-2", "MTP-3", "MTP-3F", "PeriPage+", "PeriPage_", "GT01", "GT02", "GB01", "GB02", "YHK-54A8", "MX06", "D110-E8", NULL};
+    const uint8_t ucTypes[] = {PRINTER_MTP2, PRINTER_MTP2, PRINTER_MTP3, PRINTER_MTP3, PRINTER_PERIPAGEPLUS, PRINTER_PERIPAGE, PRINTER_CAT, PRINTER_CAT, PRINTER_CAT, PRINTER_CAT, PRINTER_PANDA, PRINTER_CAT, PRINTER_PANDA};
     char szTemp[32];
     uint8_t ucType = 255; // invalid
     int i=0;
     strcpy(szTemp, name); // truncate the PeriPage name because it has part of the MAC addr
-    szTemp[9] = 0; // truncate after PeriPage_ or PeriPage+
     while (szTypes[i] != NULL) {
         if (strcmp(szTemp, szTypes[i]) == 0) {
             ucType = ucTypes[i];
             return ucType;
-        } else {
-            i++;
+        } else { // try truncating the name to match
+            if (memcmp(szTemp, szTypes[i], strlen(szTypes[i])) == 0) {
+                ucType = ucTypes[i];
+                return ucType;
+            }
         }
+        i++;
     }
     return ucType;
 } /* findPrinter */

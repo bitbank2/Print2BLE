@@ -18,11 +18,18 @@ static int iWidth, iHeight; // size of the image that's ready to print
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    _myview = [DragDropView alloc];
+}
 
+- (void)viewDidLayout {
+    // the outer frame size is known here, so set our drag/drop frame to the same size
+    
+//    _myview.frame = NSMakeRect(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    
+    [_myview initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     // Do any additional setup after loading the view.
     BLEClass = [[MyBLE alloc] init];
     
-    _myview = [DragDropView alloc];
     _myview.myVC = self; // give DragDropView access to our methods
     [[self view] addSubview:_myview];
 
@@ -36,14 +43,7 @@ static int iWidth, iHeight; // size of the image that's ready to print
                                                object:nil];
 
 //    [BLEClass startScan]; // scan and connect to any printers in the area
-}
 
-- (void)viewDidLayout {
-    // the outer frame size is known here, so set our drag/drop frame to the same size
-    
-//    _myview.frame = NSMakeRect(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-    
-    [_myview initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
 }
 - (void)setRepresentedObject:(id)representedObject {
     [super setRepresentedObject:representedObject];
