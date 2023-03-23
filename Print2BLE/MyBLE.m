@@ -243,11 +243,16 @@ didDiscoverServices:(NSError *)error
 - (void)writeData: (uint8_t *)pData withLength:(int)len withResponse:(bool)response
 {
     NSData *myData = [NSData dataWithBytes:pData length:len];
-    
-    if (response)
+    BOOL supportsResponse = (self.myChar.properties & CBCharacteristicPropertyWrite);
+    if (response && supportsResponse) {
         [_myPeripheral writeValue:myData forCharacteristic:_myChar type:CBCharacteristicWriteWithResponse];
-    else
+    } else {
         [_myPeripheral writeValue:myData forCharacteristic:_myChar type:CBCharacteristicWriteWithoutResponse];
+        if (response) {
+            // Must wait for a response but printer characteristic doesn't support it. Let's wait a bit instead.
+            usleep(100000);
+        }
+    }
 
 } /* writeData */
 
