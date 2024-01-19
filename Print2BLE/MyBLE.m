@@ -51,8 +51,8 @@ const unsigned char ucMirror[256]=
 
 - (uint8_t)findPrinter: (const char *) name
 {
-    const char *szTypes[] = {"MTP-II", "MTP-2", "MTP-3", "MTP-3F", "PeriPage+", "PeriPage_", "GT01", "GT02", "GB01", "GB02", "YHK-54A8", "MX06", "D110-E8", NULL};
-    const uint8_t ucTypes[] = {PRINTER_MTP2, PRINTER_MTP2, PRINTER_MTP3, PRINTER_MTP3, PRINTER_PERIPAGEPLUS, PRINTER_PERIPAGE, PRINTER_CAT, PRINTER_CAT, PRINTER_CAT, PRINTER_CAT, PRINTER_PANDA, PRINTER_CAT, PRINTER_PANDA};
+    const char *szTypes[] = {"MTP-II", "MTP-2", "MTP-3", "MTP-3F", "PeriPage+", "PeriPage_", "GT01", "GT02", "GB01", "GB02", "YHK-54A8", "MX06", "D110-E8", "X5", NULL};
+    const uint8_t ucTypes[] = {PRINTER_MTP2, PRINTER_MTP2, PRINTER_MTP3, PRINTER_MTP3, PRINTER_PERIPAGEPLUS, PRINTER_PERIPAGE, PRINTER_CAT, PRINTER_CAT, PRINTER_CAT, PRINTER_CAT, PRINTER_PANDA, PRINTER_CAT, PRINTER_PANDA, PRINTER_CAT};
     char szTemp[32];
     uint8_t ucType = 255; // invalid
     int i=0;
